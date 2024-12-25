@@ -25,14 +25,15 @@ jobs: # Những công việc dev làm thường ngày: lấy code, build, chạy
         uses: actions/setup-java@v1 # Khai báo cần dùng JDK để build
         with:
           java-version: 1.17 # Khai báo sử dụng phiên bản JDK 1.17 để build
+          
       - name: Install GlassFish server
         run: |
-          wget https://download.eclipse.org/ee4j/glassfish/glassfish-5.1.0.zip
-          unzip glassfish-5.1.0.zip -d /usr/local/
-          mv /usr/local/glassfish5 /usr/local/glassfish
+         wget https://repo1.maven.org/maven2/org/glassfish/main/distributions/glassfish/5.1.0/glassfish-5.1.0.zip
+         unzip glassfish-5.1.0.zip -d /usr/local/
+         mv /usr/local/glassfish5 /usr/local/glassfish
           
       - name: Build project with Ant
-        run: ant -noinput -buildfile build.xml -Dj2ee.server.home=/usr/local/glassfish # Quá trình build sẽ cần đến file cấu hình build.xml, build-impl.xml
+        run: ant -noinput -buildfile build.xml -Dj2ee.server.home="C:\Users\ASUS\Downloads\glassfish-5.1.0\glassfish5" # Quá trình build sẽ cần đến file cấu hình build.xml, build-impl.xml
       
       - name: Distribute jar-war file # Gửi file .jar .war đi đâu, CD nhảy vào ...
         run: mkdir staging && cp dist/*.jar staging # tạo thư mục staging chứa file .jar .war sau khi build      
