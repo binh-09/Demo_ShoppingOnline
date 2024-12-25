@@ -33,7 +33,7 @@ jobs: # Những công việc dev làm thường ngày: lấy code, build, chạy
         run: mkdir staging && cp dist/*.jar staging # tạo thư mục staging chứa file .jar .war sau khi build      
      
       - name: Make hyperlink to jar-war file # Tạo hyperlink để download build 
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: 1.0-SNAPSHOT.jar # Bản build được đánh version 1.0-SNAPSHOT
           path: staging
