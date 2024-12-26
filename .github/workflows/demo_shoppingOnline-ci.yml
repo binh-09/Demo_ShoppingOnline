@@ -1,47 +1,46 @@
 name: Shopping-Online with CI | © 2024 by binhNT
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the main branch
 on:
   push:
-    branches: [ main ] # Lấy code từ nhánh main nếu có ai push code lên  
+    branches: [ main ]
   pull_request:
-    branches: [ main ] # Lấy code từ nhánh main nếu có ai gửi pull request  
+    branches: [ main ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs: # Những công việc dev làm thường ngày: lấy code, build, chạy test, đóng gói, gửi build...
-  # This workflow contains a single job called "build"
+jobs:
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Check-out repository # Lấy code từ kho thảy vào máy ảo của GitHub chuẩn bị build ở bước sau
+      - name: Check-out repository
         uses: actions/checkout@v2
 
       - name: Set up JDK 1.17
-        uses: actions/setup-java@v1 # Khai báo cần dùng JDK để build
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.17 # Khai báo sử dụng phiên bản JDK 1.17 để build
-          
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Install GlassFish server
         run: |
-         wget https://repo1.maven.org/maven2/org/glassfish/main/distributions/glassfish/5.1.0/glassfish-5.1.0.zip
-         unzip glassfish-5.1.0.zip -d /usr/local/
-         mv /usr/local/glassfish5 /usr/local/glassfish
+          wget https://repo1.maven.org/maven2/org/glassfish/main/distributions/glassfish/5.1.0/glassfish-5.1.0.zip
+          unzip glassfish-5.1.0.zip -d /usr/local/
+          mv /usr/local/glassfish5 /usr/local/glassfish
           
       - name: Build project with Ant
-        run: ant -noinput -buildfile build.xml -Dj2ee.server.home="C:\Users\ASUS\Downloads\glassfish-5.1.0\glassfish5" # Quá trình build sẽ cần đến file cấu hình build.xml, build-impl.xml
-      
-      - name: Distribute jar-war file # Gửi file .jar .war đi đâu, CD nhảy vào ...
-        run: mkdir staging && cp dist/*.jar staging # tạo thư mục staging chứa file .jar .war sau khi build      
-     
-      - name: Make hyperlink to jar-war file # Tạo hyperlink để download build 
+        run: ant -noinput -buildfile build.xml -Dj2ee.server.home="/usr/local/glassfish"
+
+      - name: Verify build files
+        run: |
+          if [ ! -d "dist" ] || [ -z "$(ls dist/*.jar 2>/dev/null)" ]; then
+            echo "No build files found in 'dist'. Exiting."
+            exit 1
+          fi
+
+      - name: Distribute jar-war file
+        run: mkdir staging && cp dist/*.jar staging
+
+      - name: Make hyperlink to jar-war file
         uses: actions/upload-artifact@v3
         with:
-          name: 1.0-SNAPSHOT.jar # Bản build được đánh version 1.0-SNAPSHOT
+          name: 1.0-SNAPSHOT.jar
           path: staging
-
-# End of CI workflow file
