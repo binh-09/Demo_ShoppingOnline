@@ -26,7 +26,9 @@ jobs:
           unzip glassfish-5.1.0.zip -d $GITHUB_WORKSPACE/glassfish5
           
       - name: Build project with Ant
-        run: ant -noinput -buildfile build.xml -Dj2ee.server.home="$GITHUB_WORKSPACE/glassfish5/glassfish5"
+        run: |
+          wget -O copylibs.jar https://your-source-path/org-netbeans-modules-java-j2seproject-copylibstask.jar
+          ant -noinput -buildfile build.xml -Dj2ee.server.home="$GITHUB_WORKSPACE/glassfish5/glassfish5" -Dlibs.CopyLibs.classpath="$GITHUB_WORKSPACE/copylibs.jar"
 
       - name: Verify build files
         run: |
