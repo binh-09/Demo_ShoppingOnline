@@ -23,11 +23,10 @@ jobs:
       - name: Install GlassFish server
         run: |
           wget https://repo1.maven.org/maven2/org/glassfish/main/distributions/glassfish/5.1.0/glassfish-5.1.0.zip
-          unzip glassfish-5.1.0.zip -d /usr/local/
-          mv /usr/local/glassfish5 /usr/local/glassfish
+          unzip glassfish-5.1.0.zip -d $GITHUB_WORKSPACE/glassfish5
           
       - name: Build project with Ant
-        run: ant -noinput -buildfile build.xml -Dj2ee.server.home="/usr/local/glassfish"
+        run: ant -noinput -buildfile build.xml -Dj2ee.server.home="$GITHUB_WORKSPACE/glassfish5/glassfish5"
 
       - name: Verify build files
         run: |
